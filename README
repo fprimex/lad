@@ -2,7 +2,8 @@ Lines And Dots - LAD
 An Application for Explorations in Graph Theory and Networking
 
 Homepage: http://www.fprimex.com/lad
-Git repository: http://git.fprimex.com/?p=lad
+Subversion repository: http://www.fprimex.com/svn/lad
+Trac: http://www.fprimex.com/trac/lad
 Written by: Brent Woodruff <brent@fprimex.com>
 
 LAD uses NetworkX for its graph class. Please see:
@@ -14,23 +15,18 @@ http://www.gnu.org/licenses/gpl.html
 
 Bugs
 ====
-There is currently no issue tracking system set up for LAD. Please
-email me, brent@fprimex.com, with program issues. Check the Future
-Plans section of this file to see about issues and features that are
-already known or in the works.
+Email bugs to me: brent@fprimex.com
 
 Program Requirements
 ====================
 Python (2.5.1) - http://python.org
 wxPython (2.8.4.0) - http://wxpython.org
-NetworkX (0.34) - https://networkx.lanl.gov
+NetworkX (1.x) - https://networkx.lanl.gov
 numpy (1.0.3) or Numeric (24.2) - http://numpy.scipy.org
 
 Recent enough versions other than those listed in the parentheses will
 probably work fine. They are just the exact ones I am using to develop
 the program on Ubuntu Linux.
-
-For help getting your environment set up, see http://dev.fprimex.com
 
 Ready to run, easy packages will not be provided until a real release
 is prepared. This is a pre-alpha technology preview.
