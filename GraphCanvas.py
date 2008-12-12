@@ -380,7 +380,7 @@ class GraphCanvas(wx.ScrolledWindow):
                         #    el = "e%i" % size
 
                         e = u, v
-                        Globals.G.add_edge(e)
+                        Globals.G.add_edge(*e)
                         self.SelectEdge(e)
         self.Refresh()
         self.__execute_callback(self.on_edge_create_funcs)
@@ -393,7 +393,7 @@ class GraphCanvas(wx.ScrolledWindow):
                 v = self.selected_nodes[i+1]
                 if not Globals.G.has_neighbor(u, v):
                     e = u, v
-                    Globals.G.add_edge(e)
+                    Globals.G.add_edge(*e)
                     self.SelectEdge(e)
         self.Refresh()
         self.__execute_callback(self.on_edge_create_funcs)

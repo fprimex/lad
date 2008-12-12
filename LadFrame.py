@@ -21,10 +21,7 @@ LAD_ADD_EDGES = wx.NewId()
 LAD_ADD_PATH = wx.NewId()
 LAD_EDIT_SEL = wx.NewId()
 LAD_DEL_SEL = wx.NewId()
-
-# begin wxGlade: extracode
-
-# end wxGlade
+LAD_WEBSITE = wx.NewId()
 
 class LadFrame(wx.Frame):
     lad_file = ""
@@ -43,7 +40,6 @@ class LadFrame(wx.Frame):
         
         # Menu Bar
         self.main_window_menubar = wx.MenuBar()
-        self.SetMenuBar(self.main_window_menubar)
         wxglade_tmp_menu = wx.Menu()
         wxglade_tmp_menu.Append(wx.ID_NEW, "New\tCtrl-N", "Launch another LAD", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(wx.ID_OPEN, "Open\tCtrl-O", "Open a previously saved graph", wx.ITEM_NORMAL)
@@ -72,6 +68,11 @@ class LadFrame(wx.Frame):
         wxglade_tmp_menu.AppendSeparator()
         wxglade_tmp_menu.Append(LAD_DEL_SEL, "Delete Selection\tCtrl-BACK", "Delete selected vertices and edges", wx.ITEM_NORMAL)
         self.main_window_menubar.Append(wxglade_tmp_menu, "&Graph")
+        wxglade_tmp_menu = wx.Menu()
+        wxglade_tmp_menu.Append(wx.ID_ABOUT, "About", "About LAD", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(LAD_WEBSITE, "Website", "", wx.ITEM_NORMAL)
+        self.main_window_menubar.Append(wxglade_tmp_menu, "&Help")
+        self.SetMenuBar(self.main_window_menubar)
         # Menu Bar end
         self.main_window_statusbar = self.CreateStatusBar(1, 0)
         self.canvas = GraphCanvas.GraphCanvas(self.left_pane, -1, self)
@@ -97,6 +98,8 @@ class LadFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnSelectAll, id=wx.ID_SELECTALL)
         self.Bind(wx.EVT_MENU, self.OnEditSelection, id=LAD_EDIT_SEL)
         self.Bind(wx.EVT_MENU, self.OnDeleteSelection, id=LAD_DEL_SEL)
+        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
+        self.Bind(wx.EVT_MENU, self.OnWebsite, id=LAD_WEBSITE)
         # end wxGlade
 
     def __set_properties(self):
@@ -342,6 +345,16 @@ class LadFrame(wx.Frame):
 
     def OnRefresh(self, event): # wxGlade: LadFrame.<event_handler>
         self.canvas.Refresh()
+
+    def OnAbout(self, event): # wxGlade: LadFrame.<event_handler>
+        msg = """LAD - Lines and Dots
+Copyright Brent W. Woodruff
+Licensed under the GNU GPL"""
+        dlg = wx.MessageDialog(self, msg, "About LAD", wx.OK)
+        dlg.ShowModal()
+
+    def OnWebsite(self, event): # wxGlade: LadFrame.<event_handler>
+        wx.LaunchDefaultBrowser("http://www.fprimex.com/programming/lad")
 
 # end of class LadFrame
 

@@ -10,7 +10,7 @@ class Lad(wx.App):
         wx.InitAllImageHandlers()
         main_window = LadFrame.LadFrame(None, -1, "")
         self.SetTopWindow(main_window)
-        main_window.Show()
+        #main_window.Show()
         return 1
 
 # end of class Lad
@@ -20,4 +20,5 @@ if __name__ == "__main__":
     lad.TopWindow.canvas.InitArtist()
     lad.TopWindow.InitNotebook()
     lad.TopWindow.InitShell()
+    lad.TopWindow.Show()
     lad.MainLoop()
