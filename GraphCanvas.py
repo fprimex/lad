@@ -57,6 +57,7 @@ class GraphCanvas(wx.ScrolledWindow):
 
     def __init__(self, parent, id, frame):
         wx.ScrolledWindow.__init__(self, parent, id)
+        self.SetDoubleBuffered(True)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_SIZE, self.OnResize)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
