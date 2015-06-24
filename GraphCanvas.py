@@ -15,6 +15,7 @@ class GraphCanvas(wx.ScrolledWindow):
     """
     selected_nodes = []
     selected_edges = []
+    selection_rectangle = None
 
     client_size = wx.Size(0, 0)
     node_radius = 5
@@ -115,6 +116,13 @@ class GraphCanvas(wx.ScrolledWindow):
         self.artist.DrawAxes(dc)
         self.artist.DrawAllEdges(dc)
         self.artist.DrawAllNodes(dc)
+
+        if self.selection_rectangle:
+            dc.DrawLine(*self.selection_rectangle[0])
+            dc.DrawLine(*self.selection_rectangle[1])
+            dc.DrawLine(*self.selection_rectangle[2])
+            dc.DrawLine(*self.selection_rectangle[3])
+
         dc.EndDrawing()
 
     def OnResize(self, event):
@@ -206,6 +214,7 @@ class GraphCanvas(wx.ScrolledWindow):
             self.__drag_mode = self.__DRAG_NONE
             self.__drag_node = None
             self.__execute_callback(self.on_drag_end_funcs)
+            self.selection_rectangle = None
         elif event.Dragging() and self.__drag_mode != self.__DRAG_NONE:
             if self.__drag_mode == self.__DRAG_START:
                 tolerance = 2.0
@@ -250,10 +259,6 @@ class GraphCanvas(wx.ScrolledWindow):
                 elif self.mouse_mode == self.MOUSE_MODE_SELECTION or self.mouse_mode == self.MOUSE_MODE_LOCK:
                     # Not dragging an object and in selection or lock mode
                     # - do selection rectangle
-                    dc = wx.BufferedPaintDC(self)
-                    self.PrepareDC(dc)
-                    myfont = wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL)
-                    dc.SetFont(myfont)
                     screen_drag_pos = self.WorldToClient(self.__drag_start_pos)
       
                     screen_tl = screen_drag_pos
@@ -280,16 +285,14 @@ class GraphCanvas(wx.ScrolledWindow):
                             if v in self.selected_nodes:
                                 self.DeselectVertex(v)
 
-                    dc.Clear()
+                    self.selection_rectangle = [
+                        (screen_tl[0], screen_tl[1], screen_tr[0], screen_tr[1]),
+                        (screen_tl[0], screen_tl[1], screen_bl[0], screen_bl[1]),
+                        (screen_tr[0], screen_tr[1], screen_br[0], screen_br[1]),
+                        (screen_bl[0], screen_bl[1], screen_br[0], screen_br[1])
+                        ]
 
-                    self.artist.DrawAxes(dc)
-                    self.artist.DrawAllEdges(dc)
-                    self.artist.DrawAllNodes(dc)
-
-                    dc.DrawLine(screen_tl[0], screen_tl[1], screen_tr[0], screen_tr[1])
-                    dc.DrawLine(screen_tl[0], screen_tl[1], screen_bl[0], screen_bl[1])
-                    dc.DrawLine(screen_tr[0], screen_tr[1], screen_br[0], screen_br[1])
-                    dc.DrawLine(screen_bl[0], screen_bl[1], screen_br[0], screen_br[1])
+                    self.Refresh()
 
 #    def OnKeyDown(self, event):
 #        key = event.GetKeyCode()
@@ -371,7 +374,7 @@ class GraphCanvas(wx.ScrolledWindow):
                 for j in range(i+1, len(self.selected_nodes)):
                     u = self.selected_nodes[i]
                     v = self.selected_nodes[j]
-                    if not Globals.G.has_neighbor(u, v):
+                    if not Globals.G.has_edge(u, v):
                         # labeling scheme if we start doing that
                         #size = Globals.G.size()
                         #l = "e%i" % size
@@ -392,7 +395,7 @@ class GraphCanvas(wx.ScrolledWindow):
             for i in range(len(self.selected_nodes) - 1):
                 u = self.selected_nodes[i]
                 v = self.selected_nodes[i+1]
-                if not Globals.G.has_neighbor(u, v):
+                if not Globals.G.has_edge(u, v):
                     e = u, v
                     Globals.G.add_edge(*e)
                     self.SelectEdge(e)
@@ -406,8 +409,8 @@ class GraphCanvas(wx.ScrolledWindow):
             del Globals.G.vlabel[v]
             del Globals.G.vcolor[v]
 
-        Globals.G.delete_edges_from(self.selected_edges)
-        Globals.G.delete_nodes_from(self.selected_nodes)
+        Globals.G.remove_edges_from(self.selected_edges)
+        Globals.G.remove_nodes_from(self.selected_nodes)
         self.selected_edges = []
         self.selected_nodes = []
         self.Refresh()

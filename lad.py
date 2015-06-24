@@ -7,7 +7,7 @@ import LadFrame
 
 class Lad(wx.App):
     def OnInit(self):
-        wx.InitAllImageHandlers()
+        #wx.InitAllImageHandlers()
         main_window = LadFrame.LadFrame(None, -1, "")
         self.SetTopWindow(main_window)
         #main_window.Show()
