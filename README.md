@@ -5,7 +5,7 @@ An Application for Explorations in Graph Theory and Networking
 ## Program Requirements
 
 * Python (2.7) - http://python.org
-* wxPython (2.8.4.0) - http://wxpython.org
+* wxPython (3.0) - http://wxpython.org
 * NetworkX (1.x) - https://networkx.github.io/
 * numpy - http://numpy.scipy.org
 
