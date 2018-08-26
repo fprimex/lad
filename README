@@ -1,38 +1,16 @@
-Lines And Dots - LAD
+## Lines And Dots - LAD
+
 An Application for Explorations in Graph Theory and Networking
 
-Homepage: http://www.fprimex.com/lad
-Subversion repository: http://www.fprimex.com/svn/lad
-Trac: http://www.fprimex.com/trac/lad
-Written by: Brent Woodruff <brent@fprimex.com>
+## Program Requirements
 
-LAD uses NetworkX for its graph class. Please see:
-https://networkx.lanl.gov
+* Python (2.7) - http://python.org
+* wxPython (2.8.4.0) - http://wxpython.org
+* NetworkX (1.x) - https://networkx.github.io/
+* numpy - http://numpy.scipy.org
 
-LAD is available under the GNU General Public License, version 3
-or later. Please see:
-http://www.gnu.org/licenses/gpl.html
+## Running LAD
 
-Bugs
-====
-Email bugs to me: brent@fprimex.com
-
-Program Requirements
-====================
-Python (2.5.1) - http://python.org
-wxPython (2.8.4.0) - http://wxpython.org
-NetworkX (1.x) - https://networkx.lanl.gov
-numpy (1.0.3) or Numeric (24.2) - http://numpy.scipy.org
-
-Recent enough versions other than those listed in the parentheses will
-probably work fine. They are just the exact ones I am using to develop
-the program on Ubuntu Linux.
-
-Ready to run, easy packages will not be provided until a real release
-is prepared. This is a pre-alpha technology preview.
-
-Running LAD
-===========
 Launch with 'python lad.py'
 
 The main window contains menus for loading, saving, and exporting graphs
@@ -60,25 +38,32 @@ interatction with the Graph. I don't recommend reassigning the graph,
 G, or other variables right now.
 
 Several variables have been made available at the shell by default:
+
+```
 G        - The program's central data structure, a networkx graph
 canvas   - The graph drawing window
 notebook - The tabbed window containing the Info and Vars pages
 shell    - The shell window itself
+```
 
 The graph G has several interesting properties and methods. I recommend
-grabbing the networkx quick reference:
-https://networkx.lanl.gov/wiki/QuickReference
+grabbing the networkx
+[tutorial](https://networkx.github.io/documentation/networkx-1.9/_downloads/networkx_tutorial.pdf).
 
 In addition to the standard attributes and methods provided by networkx,
 LAD graphs come standard with the following Python dictionary attributes:
-G.vlabel[v] - dictionary of vertex labels
-G.vpos[v] - dictionary of vertex positions
+
+```
+G.vlabel[v]  - dictionary of vertex labels
+G.vpos[v]    - dictionary of vertex positions
 G.vweight[v] - dictionary of vertex weights
-G.vcolor[v] - dictionary of vertex colors
-G.vars - dictionary of user defined variables
-G.var_exps - dictionary of expressions used to calculate G.var values
+G.vcolor[v]  - dictionary of vertex colors
+G.vars       - dictionary of user defined variables
+G.var_exps   - dictionary of expressions used to calculate G.var values
+```
 
 A standard 'session' I have been using to show off multiple features:
+
 * Launch LAD
 * Click to make several vertices (hold Ctrl to select while creating)
 * Add a path (Ctrl+P)
@@ -89,7 +74,8 @@ A standard 'session' I have been using to show off multiple features:
 * Give the variable the name degree0, press tab, type G.degree(0)
 * Create a new vertex / edge that connects to v0 (vertex number 0)
 * In the shell:
->>> G.info()
+
+```
 >>> import networkx as NX 
 >>> G.vpos = NX.circular_layout(G)
 >>> canvas.Refresh()
@@ -97,12 +83,13 @@ A standard 'session' I have been using to show off multiple features:
         G.vpos[v] = 5*G.vpos[v]
 
 >>> canvas.Refresh()
+```
 
 * Back in the main window, save the graph, export it as an image, etc
 * Select all, delete (Ctrl+A, Ctrl+Backspace)
 
-Extending LAD
-=============
+## Extending LAD
+
 LAD has been designed from the ground up to be ultimately hackable. Python
 language constructs such as method reassignment are used and encouraged.
 
@@ -111,10 +98,13 @@ source distribution to see how to get started either drawing graphs or
 creating notebook UI elements.
 
 For example, open a new graph and enter at the shell:
+
+```
 >>> import GraphArtist
 >>> blank_artist = GraphArtist.BlankArtist()
 >>> canvas.artist.DrawAxes = blank_artist.DrawAxes
 >>> canvas.Refresh()
+```
 
 I would love to see people create modules to import that created new
 menu entries for their own graph analysis purposes.
