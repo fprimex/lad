@@ -56,4 +56,8 @@ target/
 # PyCharm
 .idea/
 
+# wxGlade
+*.py~
+*.wxg~
+
 .DS_Store

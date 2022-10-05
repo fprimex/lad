@@ -5,7 +5,7 @@ import sys
 import os
 import wx
 import wx.py as py
-import cPickle
+import pickle
 import GraphCanvas
 
 # begin wxGlade: dependencies
@@ -29,114 +29,128 @@ class LadFrame(wx.Frame):
 
     def __init__(self, *args, **kwds):
         # begin wxGlade: LadFrame.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        self.horiz_splitter = wx.SplitterWindow(self, -1, style=wx.SP_3D|wx.SP_BORDER)
-        self.bottom_pane = wx.Panel(self.horiz_splitter, -1)
-        self.top_pane = wx.Panel(self.horiz_splitter, -1)
-        self.vert_splitter = wx.SplitterWindow(self.top_pane, -1, style=wx.SP_3D|wx.SP_BORDER)
-        self.right_pane = wx.Panel(self.vert_splitter, -1)
-        self.left_pane = wx.Panel(self.vert_splitter, -1)
-        
+        self.SetSize((800, 600))
+        self.SetTitle("LAD Graph Theory")
+
         # Menu Bar
         self.main_window_menubar = wx.MenuBar()
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(wx.ID_NEW, "New\tCtrl-N", "Launch another LAD", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.ID_OPEN, "Open\tCtrl-O", "Open a previously saved graph", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.ID_NEW, "New \tCtrl-N", "Launch another LAD")
+        self.Bind(wx.EVT_MENU, self.OnNew, id=wx.ID_NEW)
+        wxglade_tmp_menu.Append(wx.ID_OPEN, "Open\tCtrl-O", "Open a previously saved graph")
+        self.Bind(wx.EVT_MENU, self.OnOpen, id=wx.ID_OPEN)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.ID_SAVE, "Save\tCtrl-S", "Save graph to a file", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(wx.ID_SAVEAS, "Save As...", "Save graph to a specified file name", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(LAD_EXPORT, "Export As Image...", "Export graph image to a number of formats", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.ID_SAVE, "Save\tCtrl-S", "Save graph to a file")
+        self.Bind(wx.EVT_MENU, self.OnSave, id=wx.ID_SAVE)
+        wxglade_tmp_menu.Append(wx.ID_SAVEAS, "Save As...", "Save graph to a specified file name")
+        self.Bind(wx.EVT_MENU, self.OnSaveAs, id=wx.ID_SAVEAS)
+        wxglade_tmp_menu.Append(LAD_EXPORT, "Export As Image...", "Export graph image to a number of formats")
+        self.Bind(wx.EVT_MENU, self.OnExport, id=LAD_EXPORT)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.ID_EXIT, "Quit\tCtrl-Q", "Quit LAD", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.ID_EXIT, "Quit\tCtrl-Q", "Quit LAD")
+        self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
         self.main_window_menubar.Append(wxglade_tmp_menu, "&File")
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(LAD_REFRESH, "Refresh\tCtrl-R", "Refresh the graph canvas", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(LAD_EDIT_AXES, "Edit Axis", "Adjust canvas mins, maxes, and scales", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(LAD_REFRESH, "Refresh\tCtrl-R", "Refresh the graph canvas")
+        self.Bind(wx.EVT_MENU, self.OnRefresh, id=LAD_REFRESH)
+        wxglade_tmp_menu.Append(LAD_EDIT_AXES, "Edit Axis", "Adjust canvas mins, maxes, and scales")
+        self.Bind(wx.EVT_MENU, self.OnEditAxes, id=LAD_EDIT_AXES)
         self.main_window_menubar.Append(wxglade_tmp_menu, "&View")
         wxglade_tmp_menu = wx.Menu()
         wxglade_tmp_menu.Append(LAD_M_MODE_VER, "Creation", "Click the graph canvas to create vertices and drag elements", wx.ITEM_RADIO)
+        self.Bind(wx.EVT_MENU, self.OnMouseModeVer, id=LAD_M_MODE_VER)
         wxglade_tmp_menu.Append(LAD_M_MODE_SEL, "Selection", "Allow element dragging, but don't allow vertex creation", wx.ITEM_RADIO)
+        self.Bind(wx.EVT_MENU, self.OnMouseModeSel, id=LAD_M_MODE_SEL)
         wxglade_tmp_menu.Append(LAD_M_MODE_LOCK, "Lock", "Don't allow element dragging or vertex creation", wx.ITEM_RADIO)
+        self.Bind(wx.EVT_MENU, self.OnMouseModeLock, id=LAD_M_MODE_LOCK)
         self.main_window_menubar.Append(wxglade_tmp_menu, "&Mouse Mode")
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(LAD_ADD_EDGES, "Add Complete Edge(s)\tCtrl-E", "Create an edge between all selected vertices", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(LAD_ADD_PATH, "Add Path Edge(s)\tCtrl-P", "Create a path in the order vertices were selected", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(LAD_ADD_EDGES, "Add Complete Edge(s)\tCtrl-E", "Create an edge between all selected vertices")
+        self.Bind(wx.EVT_MENU, self.OnAddEdges, id=LAD_ADD_EDGES)
+        wxglade_tmp_menu.Append(LAD_ADD_PATH, "Add Path Edge(s)\tCtrl-P", "Create a path in the order vertices were selected")
+        self.Bind(wx.EVT_MENU, self.OnAddPath, id=LAD_ADD_PATH)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(wx.ID_SELECTALL, "Select All\tCtrl-A", "Select all vertices and edges in the graph", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(LAD_EDIT_SEL, "Edit Selected Vertices", "Edit the properties of the selected vertices", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.ID_SELECTALL, "Select All\tCtrl-A", "Select all vertices and edges in the graph")
+        self.Bind(wx.EVT_MENU, self.OnSelectAll, id=wx.ID_SELECTALL)
+        wxglade_tmp_menu.Append(LAD_EDIT_SEL, "Edit Selected Vertices", "Edit the properties of the selected vertices")
+        self.Bind(wx.EVT_MENU, self.OnEditSelection, id=LAD_EDIT_SEL)
         wxglade_tmp_menu.AppendSeparator()
-        wxglade_tmp_menu.Append(LAD_DEL_SEL, "Delete Selection\tCtrl-BACK", "Delete selected vertices and edges", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(LAD_DEL_SEL, "Delete Selection\tCtrl-BACK", "Delete selected vertices and edges")
+        self.Bind(wx.EVT_MENU, self.OnDeleteSelection, id=LAD_DEL_SEL)
         self.main_window_menubar.Append(wxglade_tmp_menu, "&Graph")
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(wx.ID_ABOUT, "About", "About LAD", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(LAD_WEBSITE, "Website", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.Append(wx.ID_ABOUT, "About", "About LAD")
+        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
+        wxglade_tmp_menu.Append(LAD_WEBSITE, "Website", "")
+        self.Bind(wx.EVT_MENU, self.OnWebsite, id=LAD_WEBSITE)
         self.main_window_menubar.Append(wxglade_tmp_menu, "&Help")
         self.SetMenuBar(self.main_window_menubar)
         # Menu Bar end
-        self.main_window_statusbar = self.CreateStatusBar(1, 0)
-        self.canvas = GraphCanvas.GraphCanvas(self.left_pane, -1, self)
-        self.notebook = wx.Notebook(self.right_pane, -1)
-        self.shell = py.shell.Shell(self.bottom_pane, -1)
 
-        self.__set_properties()
-        self.__do_layout()
-
-        self.Bind(wx.EVT_MENU, self.OnNew, id=wx.ID_NEW)
-        self.Bind(wx.EVT_MENU, self.OnOpen, id=wx.ID_OPEN)
-        self.Bind(wx.EVT_MENU, self.OnSave, id=wx.ID_SAVE)
-        self.Bind(wx.EVT_MENU, self.OnSaveAs, id=wx.ID_SAVEAS)
-        self.Bind(wx.EVT_MENU, self.OnExport, id=LAD_EXPORT)
-        self.Bind(wx.EVT_MENU, self.OnQuit, id=wx.ID_EXIT)
-        self.Bind(wx.EVT_MENU, self.OnRefresh, id=LAD_REFRESH)
-        self.Bind(wx.EVT_MENU, self.OnEditAxes, id=LAD_EDIT_AXES)
-        self.Bind(wx.EVT_MENU, self.OnMouseModeVer, id=LAD_M_MODE_VER)
-        self.Bind(wx.EVT_MENU, self.OnMouseModeSel, id=LAD_M_MODE_SEL)
-        self.Bind(wx.EVT_MENU, self.OnMouseModeLock, id=LAD_M_MODE_LOCK)
-        self.Bind(wx.EVT_MENU, self.OnAddEdges, id=LAD_ADD_EDGES)
-        self.Bind(wx.EVT_MENU, self.OnAddPath, id=LAD_ADD_PATH)
-        self.Bind(wx.EVT_MENU, self.OnSelectAll, id=wx.ID_SELECTALL)
-        self.Bind(wx.EVT_MENU, self.OnEditSelection, id=LAD_EDIT_SEL)
-        self.Bind(wx.EVT_MENU, self.OnDeleteSelection, id=LAD_DEL_SEL)
-        self.Bind(wx.EVT_MENU, self.OnAbout, id=wx.ID_ABOUT)
-        self.Bind(wx.EVT_MENU, self.OnWebsite, id=LAD_WEBSITE)
-        # end wxGlade
-
-    def __set_properties(self):
-        # begin wxGlade: LadFrame.__set_properties
-        self.SetTitle("LAD Graph Theory")
-        self.SetSize((800, 600))
+        self.main_window_statusbar = self.CreateStatusBar(1)
         self.main_window_statusbar.SetStatusWidths([-1])
         # statusbar fields
         main_window_statusbar_fields = ["Welcome to LAD Graph Theory"]
         for i in range(len(main_window_statusbar_fields)):
             self.main_window_statusbar.SetStatusText(main_window_statusbar_fields[i], i)
+
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.horiz_splitter = wx.SplitterWindow(self, wx.ID_ANY, style=wx.SP_3D | wx.SP_BORDER)
+        self.horiz_splitter.SetMinimumPaneSize(20)
+        main_sizer.Add(self.horiz_splitter, 1, wx.EXPAND, 0)
+
+        self.top_pane = wx.Panel(self.horiz_splitter, wx.ID_ANY)
+
+        top_pane_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.vert_splitter = wx.SplitterWindow(self.top_pane, wx.ID_ANY, style=wx.SP_3D | wx.SP_BORDER)
+        self.vert_splitter.SetMinimumPaneSize(20)
+        top_pane_sizer.Add(self.vert_splitter, 1, wx.EXPAND, 0)
+
+        self.left_pane = wx.Panel(self.vert_splitter, wx.ID_ANY)
+
+        left_pane_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.canvas = GraphCanvas.GraphCanvas(self.left_pane, wx.ID_ANY, self)
+        left_pane_sizer.Add(self.canvas, 1, wx.EXPAND, 0)
+
+        self.right_pane = wx.Panel(self.vert_splitter, wx.ID_ANY)
+
+        sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.notebook = wx.Notebook(self.right_pane, wx.ID_ANY)
+        sizer_2.Add(self.notebook, 1, wx.EXPAND, 0)
+
+        self.bottom_pane = wx.Panel(self.horiz_splitter, wx.ID_ANY)
+
+        bottom_pane_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.shell = py.shell.Shell(self.bottom_pane, wx.ID_ANY)
+        bottom_pane_sizer.Add(self.shell, 1, wx.EXPAND, 0)
+
+        self.bottom_pane.SetSizer(bottom_pane_sizer)
+
+        self.right_pane.SetSizer(sizer_2)
+
+        self.left_pane.SetSizer(left_pane_sizer)
+
+        self.vert_splitter.SplitVertically(self.left_pane, self.right_pane)
+
+        self.top_pane.SetSizer(top_pane_sizer)
+
+        self.horiz_splitter.SplitHorizontally(self.top_pane, self.bottom_pane)
+
+        self.SetSizer(main_sizer)
+
+        self.Layout()
+
         # end wxGlade
 
         self.horiz_splitter.SetSashGravity(1.0)
         self.vert_splitter.SetSashGravity(1.0)
-
-    def __do_layout(self):
-        # begin wxGlade: LadFrame.__do_layout
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
-        bottom_pane_sizer = wx.BoxSizer(wx.VERTICAL)
-        top_pane_sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
-        left_pane_sizer = wx.BoxSizer(wx.VERTICAL)
-        left_pane_sizer.Add(self.canvas, 1, wx.EXPAND, 0)
-        self.left_pane.SetSizer(left_pane_sizer)
-        sizer_2.Add(self.notebook, 1, wx.EXPAND, 0)
-        self.right_pane.SetSizer(sizer_2)
-        self.vert_splitter.SplitVertically(self.left_pane, self.right_pane)
-        top_pane_sizer.Add(self.vert_splitter, 1, wx.EXPAND, 0)
-        self.top_pane.SetSizer(top_pane_sizer)
-        bottom_pane_sizer.Add(self.shell, 1, wx.EXPAND, 0)
-        self.bottom_pane.SetSizer(bottom_pane_sizer)
-        self.horiz_splitter.SplitHorizontally(self.top_pane, self.bottom_pane)
-        main_sizer.Add(self.horiz_splitter, 1, wx.EXPAND, 0)
-        self.SetSizer(main_sizer)
-        self.Layout()
-        # end wxGlade
 
         self.horiz_splitter.SetSashPosition(400)
         self.vert_splitter.SetSashPosition(600)
@@ -183,20 +197,18 @@ class LadFrame(wx.Frame):
                 graph_filename = open_dlg.GetFilename()
                 graph_full_filename = open_dlg.GetPath()
                 file = open(graph_full_filename, 'r')
-                Globals.G = cPickle.load(file)
+                Globals.G = pickle.load(file)
                 file.close()
                 self.ReinitNotebook()
                 self.ReinitShell()
                 self.canvas.Refresh()
          
-                #this->SetWindowTitle(graphFilename);
-
     def OnSave(self, event): # wxGlade: LadFrame.<event_handler>
         import Globals
         if self.lad_file != "" and lad_full_file != "":
             try:
                 f = open(lad_full_file, 'w')
-                cPickle.dump(Globals.G)
+                pickle.dump(Globals.G)
                 f.close()
             except:
                 dlg = wx.MessageDialog(self, "Error saving file\nThe graph was not saved. Try Save as...", "Error", wx.OK)
@@ -217,7 +229,7 @@ class LadFrame(wx.Frame):
                 graph_full_filename += ext
             try:
                 file = open(graph_full_filename, 'w')
-                cPickle.dump(Globals.G, file)
+                pickle.dump(Globals.G, file)
                 file.close()
                 self.lad_file = graph_filename
                 self.lad_full_file = graph_full_filename
@@ -275,9 +287,9 @@ class LadFrame(wx.Frame):
                 export_image = export_bitmap.ConvertToImage()
                 image_full_filename = save_dlg.GetPath()
                 if image_full_filename[len(image_full_filename)-4:] != type_ext:
-                    print image_full_filename
-                    print image_full_filename[4:]
-                    print type_ext
+                    print(image_full_filename)
+                    print(image_full_filename[4:])
+                    print(type_ext)
                     image_full_filename += type_ext
                 try:
                     export_image.SaveFile(image_full_filename, types[type])

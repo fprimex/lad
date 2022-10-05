@@ -1,2 +1,2 @@
-from DefaultArtist import DefaultArtist
-from BlankArtist import BlankArtist
+from .DefaultArtist import DefaultArtist
+from .BlankArtist import BlankArtist

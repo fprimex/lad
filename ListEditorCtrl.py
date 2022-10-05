@@ -53,9 +53,9 @@ class ListEditorCtrl(wx.ListCtrl,
 
         for row in self.listctrldata.keys():
             row_data = self.GetRowValues(row)
-            index = self.InsertStringItem(sys.maxint, row_data[0])
+            index = self.InsertItem(sys.maxsize, row_data[0])
             for i in range(0, len(row_data)):
-                self.SetStringItem(index, i, row_data[i])
+                self.SetItem(index, i, row_data[i])
                 self.SetItemData(index, row)
 
         # if there are items, auto-size each col

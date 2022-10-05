@@ -9,7 +9,6 @@ from ListEditorCtrl import ListEditorCtrl
 # end wxGlade
 
 # begin wxGlade: extracode
-
 # end wxGlade
 
 class EditSelectionDlg(wx.Dialog):
@@ -20,31 +19,27 @@ class EditSelectionDlg(wx.Dialog):
             v = Globals.canvas.selected_nodes[i]
             listdata[i] = (repr(v), Globals.G.vlabel[v], repr(Globals.G.vpos[v][0]), repr(Globals.G.vpos[v][1]), repr(Globals.G.vweight[v]), repr(Globals.G.vcolor[v]))
         # begin wxGlade: EditSelectionDlg.__init__
-        kwds["style"] = wx.DEFAULT_DIALOG_STYLE
+        kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
-        self.selection_ctrl = SelectionListCtrl(self, -1, cols, listdata, style=wx.LC_REPORT|wx.BORDER_NONE)
-
-        self.__set_properties()
-        self.__do_layout()
-        # end wxGlade
-
-    def __set_properties(self):
-        # begin wxGlade: EditSelectionDlg.__set_properties
         self.SetTitle("Edit Selection")
+
+        dlg_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.selection_ctrl = SelectionListCtrl(self, wx.ID_ANY, cols, listdata, style=wx.LC_REPORT|wx.BORDER_NONE)
         self.selection_ctrl.SetMinSize((500, 300))
+        dlg_sizer.Add(self.selection_ctrl, 1, wx.EXPAND, 0)
+
+        dlg_sizer.Add((400, 20), 0, 0, 0)
+
+        self.SetSizer(dlg_sizer)
+        dlg_sizer.Fit(self)
+
+        self.Layout()
         # end wxGlade
 
     def __do_layout(self):
         self.button = self.CreateButtonSizer(wx.OK)
-        # begin wxGlade: EditSelectionDlg.__do_layout
-        dlg_sizer = wx.BoxSizer(wx.VERTICAL)
-        dlg_sizer.Add(self.selection_ctrl, 1, wx.EXPAND, 0)
-        dlg_sizer.Add((400, 20), 0, 0, 0)
-        self.SetSizer(dlg_sizer)
-        dlg_sizer.Fit(self)
-        self.Layout()
-        # end wxGlade
-        if self.button != None:
+<16649070634726853748568wxGlade replace EditSelectionDlg __do_layout>        if self.button != None:
             dlg_sizer.Add(self.button, 0, wx.EXPAND, 0)
         dlg_sizer.Fit(self)
         self.Layout()

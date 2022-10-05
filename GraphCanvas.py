@@ -7,7 +7,7 @@ except:
     try:
         import numpy as N
     except: 
-        raise ImportError,"numpy and/or Numeric can not be imported."     
+        raise (ImportError,"numpy and/or Numeric can not be imported.")
 
 class GraphCanvas(wx.ScrolledWindow):
     """
@@ -15,7 +15,7 @@ class GraphCanvas(wx.ScrolledWindow):
     """
     selected_nodes = []
     selected_edges = []
-    selection_rectangle = None
+    selection_rectangle = N.array([])
 
     client_size = wx.Size(0, 0)
     node_radius = 5
@@ -111,19 +111,13 @@ class GraphCanvas(wx.ScrolledWindow):
         myfont = wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL)
         self.client_size = self.GetClientSize()
         dc.SetFont(myfont)
-        dc.BeginDrawing()
         self.artist.DrawBackground(dc)
         self.artist.DrawAxes(dc)
         self.artist.DrawAllEdges(dc)
         self.artist.DrawAllNodes(dc)
 
-        if self.selection_rectangle:
-            dc.DrawLine(*self.selection_rectangle[0])
-            dc.DrawLine(*self.selection_rectangle[1])
-            dc.DrawLine(*self.selection_rectangle[2])
-            dc.DrawLine(*self.selection_rectangle[3])
-
-        dc.EndDrawing()
+        if self.selection_rectangle.any():
+            dc.DrawLinesFromBuffer(self.selection_rectangle.astype('intc'))
 
     def OnResize(self, event):
         self.Refresh()
@@ -214,7 +208,7 @@ class GraphCanvas(wx.ScrolledWindow):
             self.__drag_mode = self.__DRAG_NONE
             self.__drag_node = None
             self.__execute_callback(self.on_drag_end_funcs)
-            self.selection_rectangle = None
+            self.selection_rectangle = N.array([])
         elif event.Dragging() and self.__drag_mode != self.__DRAG_NONE:
             if self.__drag_mode == self.__DRAG_START:
                 tolerance = 2.0
@@ -285,12 +279,12 @@ class GraphCanvas(wx.ScrolledWindow):
                             if v in self.selected_nodes:
                                 self.DeselectVertex(v)
 
-                    self.selection_rectangle = [
-                        (screen_tl[0], screen_tl[1], screen_tr[0], screen_tr[1]),
-                        (screen_tl[0], screen_tl[1], screen_bl[0], screen_bl[1]),
-                        (screen_tr[0], screen_tr[1], screen_br[0], screen_br[1]),
-                        (screen_bl[0], screen_bl[1], screen_br[0], screen_br[1])
-                        ]
+                    self.selection_rectangle = N.array([
+                        [ screen_tl[0], screen_tl[1], screen_tr[0], screen_tr[1] ],
+                        [ screen_tr[0], screen_tr[1], screen_br[0], screen_br[1] ],
+                        [ screen_br[0], screen_br[1], screen_bl[0], screen_bl[1] ],
+                        [ screen_bl[0], screen_bl[1], screen_tl[0], screen_tl[1] ],
+                      ])
 
                     self.Refresh()
 
@@ -433,7 +427,7 @@ class GraphCanvas(wx.ScrolledWindow):
             u_pos = self.WorldToClient(Globals.G.vpos[e[0]])
             v_pos = self.WorldToClient(Globals.G.vpos[e[1]])
             dist = self.PointLineDist(p, u_pos, v_pos)
-            if dist >= 0.0 and dist <= self.edge_search_dist:
+            if dist is not None and dist >= 0.0 and dist <= self.edge_search_dist:
                 return e
         return None
 
