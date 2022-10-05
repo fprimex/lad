@@ -1,13 +1,27 @@
 ## Lines And Dots - LAD
 
-An Application for Explorations in Graph Theory and Networking
+An Application for Explorations in Graph Theory and Networking.
+
+## License
+
+This program is licensed under the CC0, which is a license developed by
+Creative Commons to express that this material is explicitly dedicated to the
+public domain. It may be used in any way without seeking permission or
+attribution.
+
+> Creative Commons is a global nonprofit organization that enables sharing and
+> reuse of creativity and knowledge through the provision of free legal tools.
+
+Please see the
+[CC0](https://creativecommons.org/share-your-work/public-domain/cc0/) page for
+more information.
 
 ## Program Requirements
 
-* Python (2.7) - http://python.org
-* wxPython (3.0) - http://wxpython.org
-* NetworkX (1.x) - https://networkx.github.io/
-* numpy - http://numpy.scipy.org
+* Python 3.x - http://python.org
+* wxPython 4.x - http://wxpython.org
+* NetworkX 2.x - https://networkx.github.io/
+* numpy 1.x - http://numpy.scipy.org
 
 ## Running LAD
 
@@ -47,8 +61,8 @@ shell    - The shell window itself
 ```
 
 The graph G has several interesting properties and methods. I recommend
-grabbing the networkx
-[tutorial](https://networkx.github.io/documentation/networkx-1.9/_downloads/networkx_tutorial.pdf).
+visiting the networkx
+[tutorial](https://networkx.org/documentation/stable/tutorial.html).
 
 In addition to the standard attributes and methods provided by networkx,
 LAD graphs come standard with the following Python dictionary attributes:
@@ -76,8 +90,8 @@ A standard 'session' I have been using to show off multiple features:
 * In the shell:
 
 ```
->>> import networkx as NX 
->>> G.vpos = NX.circular_layout(G)
+>>> import networkx as nx
+>>> G.vpos = nx.circular_layout(G)
 >>> canvas.Refresh()
 >>> for v in G.nodes():
         G.vpos[v] = 5*G.vpos[v]
