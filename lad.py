@@ -6,17 +6,17 @@ import wx
 import LadFrame
 
 class Lad(wx.App):
-    def OnInit(self):
-        main_window = LadFrame.LadFrame(None, -1, "")
-        self.SetTopWindow(main_window)
-        return 1
+  def OnInit(self):
+    main_window = LadFrame.LadFrame(None, -1, "")
+    self.SetTopWindow(main_window)
+    return 1
 
 # end of class Lad
 
 if __name__ == "__main__":
-    lad = Lad(0)
-    lad.TopWindow.canvas.InitArtist()
-    lad.TopWindow.InitNotebook()
-    lad.TopWindow.InitShell()
-    lad.TopWindow.Show()
-    lad.MainLoop()
+  lad = Lad(0)
+  lad.TopWindow.canvas.InitArtist()
+  lad.TopWindow.InitNotebook()
+  lad.TopWindow.InitShell()
+  lad.TopWindow.Show()
+  lad.MainLoop()
