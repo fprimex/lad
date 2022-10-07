@@ -80,12 +80,33 @@ class DefaultArtist:
       edgePen = wx.Pen(Globals.canvas.graph_colors[1], 2, wx.SOLID)
     dc.SetPen(edgePen)
 
-    p1 = Globals.canvas.WorldToClient(Globals.G.vpos[e[0]])
-    p2 = Globals.canvas.WorldToClient(Globals.G.vpos[e[1]])
+    x1, y1 = Globals.G.vpos[e[0]]
+    x2, y2 = Globals.G.vpos[e[1]]
+    cx1, cy1 = Globals.canvas.WorldToClient( (x1, y1) )
+    cx2, cy2 = Globals.canvas.WorldToClient( (x2, y2) )
+    #x0 = (x1 + x2) / 2
+    #y0 = (y1 + y2) / 2
+
+    #r = math.sqrt( (x1-x0)**2 + (y1-y0)**2 )
+    #x = x0 - r
+    #y = y0 - r
+    #w = 2 * r
+    #h = 2 * r
+    #start = int(180 / math.pi * math.atan2(y1-y0, x1-x0))
+    #end   = int(180 / math.pi * math.atan2(y2-y0, x2-x0))
+
+    #cx, cy = Globals.canvas.WorldToClient( (x, y) )
+    #cw, ch = Globals.canvas.WorldToClient( (w, h) )
+
+    #ix, iy = int(cx), int(cy)
+    #iw = int(cw)
+    #ih = int(ch)
+
+    #dc.DrawEllipticArc(ix, iy, iw, ih, start, end)
 
     pts = np.array([
-      [ p1[0], p1[1] ],
-      [ p2[0], p2[1] ]
+      [ cx1, cy1 ],
+      [ cx2, cy2 ]
       ]).astype('intc')
     dc.DrawLinesFromBuffer(pts)
 

@@ -4,10 +4,13 @@ An Application for Explorations in Graph Theory and Networking.
 
 ## License
 
-This program is licensed under the CC0, which is a license developed by
-Creative Commons to express that this material is explicitly dedicated to the
-public domain. It may be used in any way without seeking permission or
-attribution.
+The file `ListEditorCtrl.py` is licensed under the wxWidgets license, and was
+derived from the example in the wxPython demo distribution.
+
+The rest of this program is licensed under the CC0, which is a license
+developed by Creative Commons to express that this material is explicitly
+dedicated to the public domain. It may be used in any way without seeking
+permission or attribution.
 
 > Creative Commons is a global nonprofit organization that enables sharing and
 > reuse of creativity and knowledge through the provision of free legal tools.

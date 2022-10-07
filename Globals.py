@@ -1,7 +1,7 @@
 import wx
-import networkx as NX
+import networkx as nx
 
-G = NX.Graph()
+G = nx.Graph()
 G.vlabel = {}
 G.vpos = {}
 G.vweight = {}

@@ -172,9 +172,25 @@ class LadFrame(wx.Frame):
   def InitShell(self):
     self.shell.push("import Globals", silent=True)
     self.ReinitShell()
-    self.shell.push("print 'local variables dir() = ' + repr(dir())")
+    self.shell.push("""print(\"\"\"
+    Imported Packages
+    -----------------
+    nx  NetworkX package
+    wx  wxPython package
+
+    Initialized Variables
+    ---------------------
+    G        NetworkX graph object
+    canvas   Graph drawing area (wx.ScrolledWindow)
+    notebook Tabbed window (wx.Notebook)
+    shell    This shell panel (wx.py.shell.Shell)
+    \"\"\")
+    """)
+
+    #local variables dir() = ' + repr(dir()))")
 
   def ReinitShell(self):
+    self.shell.push("import nx", silent=True)
     self.shell.push("G = Globals.G", silent=True)
     self.shell.push("canvas = Globals.canvas", silent=True)
     self.shell.push("notebook = Globals.notebook", silent=True)

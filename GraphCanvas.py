@@ -461,7 +461,7 @@ class GraphCanvas(wx.ScrolledWindow):
     return N.array([p[0] * dx - math.fabs(self.x_min), self.y_max - p[1] * dy])
 
   def WorldToClient(self, p):
-    dx = ( self.client_size.width  / (self.x_max - self.x_min));
-    dy = ( self.client_size.height / (self.y_max - self.y_min));
+    dx = ( self.client_size.width  / (self.x_max - self.x_min))
+    dy = ( self.client_size.height / (self.y_max - self.y_min))
     return N.array([dx * (math.fabs(self.x_min) + p[0]), dy * (self.y_max - p[1])])
 

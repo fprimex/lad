@@ -1,3 +1,6 @@
+# This file is licensed under the wxWidgets license, since it is derived from
+# an example in the wxPython demo distribution.
+
 import sys
 import operator
 import wx
@@ -83,17 +86,14 @@ class ListEditorCtrl(wx.ListCtrl,
     evt.m_itemIndex = row
     evt.m_col = col
     item = self.GetItem(row, col)
-    evt.m_item.SetId(item.GetId()) 
-    evt.m_item.SetColumn(item.GetColumn()) 
-    evt.m_item.SetData(item.GetData()) 
-    evt.m_item.SetText(item.GetText()) 
+    evt.GetItem().SetId(item.GetId())
+    evt.GetItem().SetColumn(item.GetColumn())
+    evt.GetItem().SetData(item.GetData())
+    evt.GetItem().SetText(item.GetText())
     ret = self.GetEventHandler().ProcessEvent(evt)
     if ret and not evt.IsAllowed():
       return   # user code doesn't allow the edit.
 
-    if self.GetColumn(col).m_format != self.col_style:
-      self.make_editor(self.GetColumn(col).m_format)
-  
     x0 = self.col_locs[col]
     x1 = self.col_locs[col+1] - x0
 
@@ -125,17 +125,17 @@ class ListEditorCtrl(wx.ListCtrl,
         return
 
     y0 = self.GetItemRect(row)[1]
-    
+
     editor = self.editor
-    editor.SetDimensions(x0-scrolloffset,y0, x1,-1)
-    
-    editor.SetValue(self.GetEditValue(row, col)) 
-    
+    editor.SetSize(x0-scrolloffset,y0, x1,-1)
+
+    editor.SetValue(self.GetEditValue(row, col))
+
     editor.Show()
     editor.Raise()
     editor.SetSelection(-1,-1)
     editor.SetFocus()
-  
+
     self.curRow = row
     self.curCol = col
 
@@ -151,18 +151,18 @@ class ListEditorCtrl(wx.ListCtrl,
     self.SetFocus()
 
     self.SetValue(self.curRow, self.curCol, text)
-    
+
     # post wxEVT_COMMAND_LIST_END_LABEL_EDIT
-    # Event can be vetoed. It doesn't has SetEditCanceled(), what would 
-    # require passing extra argument to CloseEditor() 
+    # Event can be vetoed. It doesn't has SetEditCanceled(), what would
+    # require passing extra argument to CloseEditor()
     evt = wx.ListEvent(wx.wxEVT_COMMAND_LIST_END_LABEL_EDIT, self.GetId())
     evt.m_itemIndex = self.curRow
     evt.m_col = self.curCol
     item = self.GetItem(self.curRow, self.curCol)
-    evt.m_item.SetId(item.GetId()) 
-    evt.m_item.SetColumn(item.GetColumn()) 
-    evt.m_item.SetData(item.GetData()) 
-    evt.m_item.SetText(text) #should be empty string if editor was canceled
+    evt.GetItem().SetId(item.GetId())
+    evt.GetItem().SetColumn(item.GetColumn())
+    evt.GetItem().SetData(item.GetData())
+    evt.GetItem().SetText(text) #should be empty string if editor was canceled
     ret = self.GetEventHandler().ProcessEvent(evt)
     if not ret or evt.IsAllowed():
       if self.IsVirtual():
@@ -170,7 +170,7 @@ class ListEditorCtrl(wx.ListCtrl,
         # data source
         self.SetVirtualData(self.curRow, self.curCol, text)
       else:
-        self.SetStringItem(self.curRow, self.curCol, text)
+        self.SetItem(self.curRow, self.curCol, text)
     self.RefreshItem(self.curRow)
     self.RefreshList()
 
@@ -189,18 +189,18 @@ class ListEditorCtrl(wx.ListCtrl,
 
   def OnLeftDouble(self, evt=None):
     """Open the editor on double clicks"""
-    
+
     if self.editor.IsShown():
       self.CloseEditor()
-      
+
     x,y = evt.GetPosition()
     row,flags = self.HitTest((x,y))
-  
+
     # the following should really be done in the mixin's init but
     # the wx.ListCtrl demo creates the columns after creating the
     # ListCtrl (generally not a good idea) on the other hand,
     # doing this here handles adjustable column widths
-    
+
     self.col_locs = [0]
     loc = 0
     for n in range(self.GetColumnCount()):
@@ -213,7 +213,7 @@ class ListEditorCtrl(wx.ListCtrl,
   def OnRightDown(self, event):
     if self.editor.IsShown():
       self.CloseEditor()
-      
+
     x, y = event.GetPosition()
     row, flags = self.HitTest((x,y))
 
@@ -244,7 +244,7 @@ class ListEditorCtrl(wx.ListCtrl,
     while name in col_one_items:
       num += 1
       name = self.base_name + repr(num + 1)
-      
+
     value = "None"
     index = self.InsertStringItem(sys.maxint, name)
     self.SetStringItem(index, 0, name)
@@ -295,7 +295,7 @@ class ListEditorCtrl(wx.ListCtrl,
 
   def GetEditValue(self, row, col):
     return self.GetItem(row, col).GetText()
-  
+
   def SetValue(self, row, col, text):
     l = list(self.listctrldata[row])
     l[col] = text
